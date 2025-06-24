@@ -56,7 +56,9 @@ func (c *userCollection) ChangePassword(username string, newPassword string) err
 		return errors.New("oldPass and newPassword should not be duplicate")
 	}
 
-	newHashedPassword := hashpass.HashPasswordLogin(newPassword, "123456")
+	// Generate a new hash for the new password
+	newHashedPassword := hashpass.HashPasswordLogin(newPassword, currentUser.HashPass)
+
 	_, err = c.client.UpdateOne(ctx,
 		bson.M{"username": username},
 		bson.M{"$set": bson.M{"hashPass": newHashedPassword}})

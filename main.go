@@ -5,7 +5,7 @@ package main
 import (
 	"ct-backend-course-baonguyen/config"
 	"ct-backend-course-baonguyen/internal/controller"
-	mongostore "ct-backend-course-baonguyen/internal/storage/mongo"
+	postgres "ct-backend-course-baonguyen/internal/storage/postgres"
 	"ct-backend-course-baonguyen/internal/usecase"
 	auth "ct-backend-course-baonguyen/pkg/auth"
 	"ct-backend-course-baonguyen/pkg/bucket"
@@ -19,18 +19,30 @@ import (
 
 func main() {
 	conf := config.Config{
-		Port:             "<Input your self>",
-		MongoURI:         "<Input your self>",
-		MongoDB:          "<Input your self>",
-		MongoCollImage:   "<Input your self>",
-		MongoCollUser:    "<Input your self>",
-		GoogleCredFile:   "<Input your self>",
-		GoogleBucketName: "<Input your self>",
+		Port:           "27017",
+		MongoURI:       "mongodb://localhost:27017",
+		MongoDB:        "ct_backend_course",
+		MongoCollImage: "images",
+		MongoCollUser:  "users",
+		// PostgreSQL config
+		PostgresHost:     "localhost",
+		PostgresPort:     "5432",
+		PostgresUser:     "postgres",
+		PostgresPassword: "postgres",
+		PostgresDBName:   "ct_backend_course",
+		PostgresSSLMode:  "disable",
+		GoogleCredFile:   "path/to/your/google/credentials.json",
+		GoogleBucketName: "your-google-bucket-name",
 	}
 
-	demoDB := mongostore.MustDatabase(conf.MongoURI, conf.MongoDB)
-	userStore := mongostore.NewUserCollection(demoDB, conf.MongoCollUser)
-	imageStore := mongostore.NewImageCollection(demoDB, conf.MongoCollImage)
+	// demoDB := mongostore.MustDatabase(conf.MongoURI, conf.MongoDB)
+	// userStore := mongostore.NewUserCollection(demoDB, conf.MongoCollUser)
+	// imageStore := mongostore.NewImageCollection(demoDB, conf.MongoCollImage)
+
+	// For PostgreSQL
+	demoDB := postgres.MustDatabase(conf.PostgresConnString())
+	userStore := postgres.NewUserRepository(demoDB.DB)
+	imageStore := postgres.NewImageRepository(demoDB.DB)
 
 	//imgBucket := bucket.MustNewGoogleStorageClient(context.TODO(), conf.GoogleBucketName, conf.GoogleCredFile)
 	imgBucket := bucket.NewFake()
