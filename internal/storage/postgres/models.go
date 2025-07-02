@@ -14,4 +14,8 @@ type User struct {
 
 type Image struct {
 	gorm.Model
+	UserID uint   `gorm:"index;not null"`
+	User   User   `gorm:"foreignKey:UserID"`
+	Name   string `gorm:"type:text;not null"`
+	Path   string `gorm:"type:text;not null"`
 }

@@ -4,6 +4,7 @@ import (
 	"context"
 	"ct-backend-course-baonguyen/internal/entity"
 	"ct-backend-course-baonguyen/pkg/auth"
+	"ct-backend-course-baonguyen/pkg/hashpass"
 	"errors"
 	"fmt"
 	"io"
@@ -18,7 +19,8 @@ type UserStore interface {
 }
 
 type ImageStore interface {
-	// TODO
+	Store(username string, imagePath string, fileName string) error
+	Query(username string) ([]entity.ImageInfo, error)
 }
 
 type ImageBucket interface {
@@ -58,7 +60,9 @@ func (uc *ucImplement) Login(ctx context.Context, req *entity.LoginRequest) (*en
 		return nil, err
 	}
 
-	if user.Password != req.Password {
+	// Check if the password matches by comparing with stored hash
+	hashedInputPassword := hashpass.HashPasswordLogin(req.Password, user.HashPass)
+	if hashedInputPassword != user.HashPass {
 		return nil, ErrPasswordMisMatch
 	}
 
@@ -92,7 +96,12 @@ func (uc *ucImplement) UploadImage(ctx context.Context, req *entity.UploadImageR
 		return nil, err
 	}
 
-	// TODO: save image info to mongoDB image collection
+	username := ctx.Value("username").(string)
+
+	// Save image information to storage
+	if err := uc.imageStore.Store(username, imageName, req.FileName); err != nil {
+		return nil, fmt.Errorf("failed to store image metadata: %w", err)
+	}
 
 	return &entity.UploadImageResponse{ImageUrl: imageName}, nil
 }
@@ -109,4 +118,4 @@ func (uc *ucImplement) ChangePassword(ctx context.Context, req *entity.ChangePas
 	return &entity.ChangePasswordResponse{Message: "Password changed"}, nil
 }
 
-var ErrPasswordMisMatch = errors.New("Password mismatch")
+var ErrPasswordMisMatch = errors.New("password mismatch")

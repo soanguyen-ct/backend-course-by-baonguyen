@@ -25,6 +25,10 @@ func NewDatabase(connString string) (*Database, error) {
 		return nil, fmt.Errorf("failed to connect to database: %w", err)
 	}
 
+	// if err := db.AutoMigrate(&User{}, &Image{}); err != nil {
+	// 	return nil, fmt.Errorf("failed to migrate database: %w", err)
+	// }
+
 	// Set connection pool settings
 	sqlDB, err := db.DB()
 	if err != nil {
