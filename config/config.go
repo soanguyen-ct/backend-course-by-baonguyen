@@ -6,11 +6,11 @@ import (
 )
 
 type Config struct {
-	Port             string
-	MongoURI         string
-	MongoDB          string
-	MongoCollImage   string
-	MongoCollUser    string
+	Port           string
+	MongoURI       string
+	MongoDB        string
+	MongoCollImage string
+	MongoCollUser  string
 	// PostgreSQL config
 	PostgresHost     string
 	PostgresPort     string
@@ -24,18 +24,18 @@ type Config struct {
 
 func LoadConfig() Config {
 	return Config{
-		Port:             GetConfig("PORT"),
-		MongoURI:         GetConfig("MONGO_URI"),
-		MongoDB:          GetConfig("MONGO_DB"),
-		MongoCollImage:   GetConfig("MONGO_COLL_IMAGE"),
-		MongoCollUser:    GetConfig("MONGO_COLL_USER"),
+		Port:           GetConfig("PORT"),
+		MongoURI:       GetConfig("MONGO_URI"),
+		MongoDB:        GetConfig("MONGO_DB"),
+		MongoCollImage: GetConfig("MONGO_COLL_IMAGE"),
+		MongoCollUser:  GetConfig("MONGO_COLL_USER"),
 		// PostgreSQL config with defaults
-		PostgresHost:     GetConfigWithDefault("POSTGRES_HOST", "localhost"),
-		PostgresPort:     GetConfigWithDefault("POSTGRES_PORT", "5432"),
-		PostgresUser:     GetConfigWithDefault("POSTGRES_USER", "postgres"),
-		PostgresPassword: GetConfigWithDefault("POSTGRES_PASSWORD", "postgres"),
-		PostgresDBName:   GetConfigWithDefault("POSTGRES_DB", "ct_backend_course"),
-		PostgresSSLMode:  GetConfigWithDefault("POSTGRES_SSLMODE", "disable"),
+		PostgresHost:     GetConfig("POSTGRES_HOST"),
+		PostgresPort:     GetConfig("POSTGRES_PORT"),
+		PostgresUser:     GetConfig("POSTGRES_USER"),
+		PostgresPassword: GetConfig("POSTGRES_PASSWORD"),
+		PostgresDBName:   GetConfig("POSTGRES_DB"),
+		PostgresSSLMode:  GetConfig("POSTGRES_SSLMODE"),
 		GoogleCredFile:   GetConfig("GOOGLE_APPLICATION_CREDENTIALS"),
 		GoogleBucketName: GetConfig("GOOGLE_APPLICATION_BUCKET"),
 	}
@@ -45,14 +45,6 @@ func GetConfig(key string) string {
 	val := os.Getenv(key)
 	if len(val) == 0 {
 		panic(fmt.Sprintf("Key %s cannot empty", key))
-	}
-	return val
-}
-
-func GetConfigWithDefault(key, defaultValue string) string {
-	val := os.Getenv(key)
-	if len(val) == 0 {
-		return defaultValue
 	}
 	return val
 }

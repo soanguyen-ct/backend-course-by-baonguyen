@@ -139,7 +139,7 @@ curl --location 'localhost:8090/api/private/self' \
 ### Upload Image
 ```shell
 curl --location 'localhost:8090/api/private/upload' \
---header 'Authorization: Bearer YOUR_JWT_TOKEN' \
+--header 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJjdC1iYWNrZW5kLWNvdXJzZSIsInN1YiI6InRlc3R1c2VyIiwiZXhwIjoxNzUxNDY3OTkyfQ.8nj0dHvhsQSqaXsxoQNpBJ8FzYbiZOwluIxrAzlVGlE' \
 --form 'image=@"/path/to/your/image.jpg"'
 ```
 
