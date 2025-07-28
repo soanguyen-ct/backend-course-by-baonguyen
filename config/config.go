@@ -55,3 +55,30 @@ func (c *Config) PostgresConnString() string {
 		c.PostgresHost, c.PostgresPort, c.PostgresUser, c.PostgresPassword,
 		c.PostgresDBName, c.PostgresSSLMode)
 }
+
+// GetConfigWithDefault returns environment variable value or default if empty
+func GetConfigWithDefault(key, defaultValue string) string {
+	val := os.Getenv(key)
+	if len(val) == 0 {
+		return defaultValue
+	}
+	return val
+}
+
+// ValidateGCSConfig validates Google Cloud Storage configuration
+func (c *Config) ValidateGCSConfig() error {
+	if c.GoogleCredFile == "" || c.GoogleCredFile == "path/to/your/google/credentials.json" {
+		return fmt.Errorf("GOOGLE_APPLICATION_CREDENTIALS is required for GCS integration")
+	}
+
+	if c.GoogleBucketName == "" || c.GoogleBucketName == "your-google-bucket-name" {
+		return fmt.Errorf("GOOGLE_APPLICATION_BUCKET is required for GCS integration")
+	}
+
+	// Check if credentials file exists
+	if _, err := os.Stat(c.GoogleCredFile); os.IsNotExist(err) {
+		return fmt.Errorf("Google credentials file not found: %s", c.GoogleCredFile)
+	}
+
+	return nil
+}
